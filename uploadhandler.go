@@ -16,7 +16,6 @@ type uploadHandler struct {
 
 func (h *uploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	log.Println("request received from " + r.RemoteAddr)
 
 	uploadFile, header, err := r.FormFile("file")
 	if err != nil {
@@ -26,14 +25,12 @@ func (h *uploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer uploadFile.Close()
 
-	originalName, fileExtension := splitFileName(header.Filename)
-	log.Println("    received file: " + originalName)
+	_, fileExtension := splitFileName(header.Filename)
 
 	// Find an unused file name
 	fileID := createRandomFileName(h.config.LinkLength)
 	for ; savedFileNames.Contains(fileID); fileID = createRandomFileName(h.config.LinkLength) {
 	}
-	log.Println("    generated random id: " + fileID)
 
 	fullFileName := fileID + fileExtension
 	savePath := h.config.FileDir + fullFileName
@@ -46,7 +43,6 @@ func (h *uploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	savedFileNames.Insert(fullFileName)
-	log.Println("    saved file as: " + fullFileName)
 
 	// Implicitly means code 200
 	w.Write([]byte(link))
