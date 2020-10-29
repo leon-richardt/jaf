@@ -52,6 +52,16 @@ jaf -configFile example.conf
 ```
 Of course, you can also write a init system script to handle this for you.
 
+## Usage
+You can use jaf with any application that can send POST requests (e.g. ShareX/ShareNix or just `curl`).
+Make sure the file you want to upload is attached as a `multipart/form-data` field named `file`.
+In `curl`, a request to upload the file `/home/alice/foo.txt` could look like this:
+```bash
+curl -L -F "file=@/home/alice/foo.txt" jaf.example.com/upload
+```
+The response will include a link to the newly uploaded content.
+Note that you may have to add additional header fields to the request, e.g. if you have basic authentication enabled.
+
 ## Inspiration
 - [i](https://github.com/fourtf/i) by [fourtf](https://github.com/fourtf) – a project very similar in scope and size
 - [filehost](https://github.com/nuuls/filehost) by [nuuls](https://github.com/nuuls) – a more integrated, fully-fledged solution that offers a web interface and also serves the files
