@@ -19,6 +19,7 @@ go test
 If you plan on using a systemd service or another init system, you might want to move the `jaf` executable to a different directory (e.g. `/opt`) at this point; you know your setup best.
 
 ## Configuration
+### jaf
 There are just a few parameters that need to be configured for jaf.
 Refer to the `example.conf` file:
 ```
@@ -40,6 +41,7 @@ Make sure the user running jaf has suitable permissions to read, and write to, `
 Also note that `LinkLength` directly relates to the number of files that can be saved.
 Since jaf only uses alphanumeric characters for file name generation, a maximum of `(26 + 26 + 10)^LinkLength` names can be generated.
 
+### nginx
 If you use a reverse-proxy to forward requests to jaf, make sure to correctly forward the original request headers.
 For nginx, this is achieved via the `proxy_pass_request_headers on;` option.
 
