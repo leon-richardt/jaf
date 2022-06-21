@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"log"
 	"math/rand"
@@ -26,29 +27,45 @@ func (h *uploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer uploadFile.Close()
 
 	_, fileExtension := splitFileName(header.Filename)
-
-	// Find an unused file name
-	fileID := createRandomFileName(h.config.LinkLength)
-	for ; savedFileNames.Contains(fileID); fileID = createRandomFileName(h.config.LinkLength) {
-	}
-
-	fullFileName := fileID + fileExtension
-	savePath := h.config.FileDir + fullFileName
-	link := h.config.LinkPrefix + fullFileName
-
-	err = saveFile(uploadFile, savePath)
+	link, err := generateLink(h, &uploadFile, fileExtension)
 	if err != nil {
 		http.Error(w, "could not save file: "+err.Error(), http.StatusInternalServerError)
 		log.Println("    could not save file: " + err.Error())
 		return
 	}
-	savedFileNames.Insert(fullFileName)
 
 	// Implicitly means code 200
 	w.Write([]byte(link))
 }
 
-func saveFile(data multipart.File, name string) error {
+// Generates a valid link to uploadFile with the specified file extension.
+// Returns the link or an error in case of failure.
+// Does not close the passed file pointer.
+func generateLink(handler *uploadHandler, uploadFile *multipart.File, fileExtension string) (string, error) {
+	// Find an unused file name
+	var fullFileName string
+	var savePath string
+	for {
+		fileStem := createRandomFileName(handler.config.LinkLength)
+		fullFileName = fileStem + fileExtension
+		savePath = handler.config.FileDir + fullFileName
+
+		if !fileExists(savePath) {
+			break
+		}
+	}
+
+	link := handler.config.LinkPrefix + fullFileName
+
+	err := saveFile(uploadFile, savePath)
+	if err != nil {
+		return "", err
+	}
+
+	return link, nil
+}
+
+func saveFile(data *multipart.File, name string) error {
 	file, err := os.Create(name)
 	if err != nil {
 		return err
@@ -56,12 +73,18 @@ func saveFile(data multipart.File, name string) error {
 
 	defer file.Close()
 
-	_, err = io.Copy(file, data)
+	_, err = io.Copy(file, *data)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func fileExists(filename string) bool {
+	_, err := os.Stat(filename)
+
+	return !errors.Is(err, os.ErrNotExist)
 }
 
 func createRandomFileName(length int) string {
