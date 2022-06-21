@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -13,8 +12,7 @@ import (
 const allowedChars = "0123456789ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 var (
-	savedFileNames = NewSet()
-	config         Config
+	config Config
 )
 
 type parameters struct {
@@ -40,16 +38,6 @@ func main() {
 	config, err := ConfigFromFile(params.configFile)
 	if err != nil {
 		log.Fatalf("could not read config file: %s\n", err.Error())
-	}
-
-	files, err := ioutil.ReadDir(config.FileDir)
-	if err != nil {
-		log.Fatalf("could not read file root %s: %s\n", config.FileDir, err.Error())
-	}
-
-	// Cache taken file names on start-up
-	for _, fileInfo := range files {
-		savedFileNames.Insert(fileInfo.Name())
 	}
 
 	// Start server
