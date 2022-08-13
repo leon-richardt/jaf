@@ -54,6 +54,24 @@ jaf -configFile example.conf
 ```
 Of course, you can also write a init system script to handle this for you.
 
+### Running from Docker
+Running it from the GitHub Container Registry
+```bash
+docker run \
+    -v /path/to/your/config.conf:/app/jaf.conf \
+    -v /path/to/where/you/want/your/files/to/be/stored:/FileDir/in/your/config \
+    ghcr.io/leon-richardt/jaf:latest
+```
+
+Building the Docker image and running it locally
+```bash
+docker build -t jaf .
+docker run \
+    -v /path/to/your/config.conf:/app/jaf.conf \
+    -v /path/to/where/you/want/your/files/to/be/stored:/FileDir/in/your/config \
+    jaf
+```
+
 ## Usage
 You can use jaf with any application that can send POST requests (e.g. ShareX/ShareNix or just `curl`).
 Make sure the file you want to upload is attached as a `multipart/form-data` field named `file`.
