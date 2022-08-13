@@ -21,19 +21,19 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
+  # Build Docker image
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run tests
+      - name: Build Docker image
         run: docker build . --file Dockerfile
 
+  # Publish built Docker image to the configured registry
   push:
-    needs: test
+    needs: build
     if: ${{ github.event_name != 'pull_request' }}
     permissions:
       contents: read
