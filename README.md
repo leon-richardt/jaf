@@ -58,6 +58,7 @@ Of course, you can also write a init system script to handle this for you.
 Running it from the GitHub Container Registry
 ```bash
 docker run \
+    -p 4712:4711 \
     -v /path/to/your/config.conf:/app/jaf.conf \
     -v /path/to/where/you/want/your/files/to/be/stored:/FileDir/in/your/config \
     ghcr.io/leon-richardt/jaf:latest
@@ -67,10 +68,14 @@ Building the Docker image and running it locally
 ```bash
 docker build -t jaf .
 docker run \
+    -p 4712:4711 \
     -v /path/to/your/config.conf:/app/jaf.conf \
     -v /path/to/where/you/want/your/files/to/be/stored:/FileDir/in/your/config \
     jaf
 ```
+
+Port 4711 is the default port for the server in `example.conf`, if you've changed this in your config you'll need to change this in the `docker run` invocations above too.  
+The above runs forwards the jaf port from 4711 in the container to 4712 on your local system.
 
 ## Usage
 You can use jaf with any application that can send POST requests (e.g. ShareX/ShareNix or just `curl`).
