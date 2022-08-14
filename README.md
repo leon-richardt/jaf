@@ -60,7 +60,7 @@ Running it from the GitHub Container Registry
 docker run \
     -p 4712:4711 \
     -v /path/to/your/config.conf:/app/jaf.conf \
-    -v /path/to/where/you/want/your/files/to/be/stored:/FileDir/in/your/config \
+    -v /path/to/local/filedir:/var/www/jaf \
     ghcr.io/leon-richardt/jaf:latest
 ```
 
@@ -70,7 +70,7 @@ docker build -t jaf .
 docker run \
     -p 4712:4711 \
     -v /path/to/your/config.conf:/app/jaf.conf \
-    -v /path/to/where/you/want/your/files/to/be/stored:/FileDir/in/your/config \
+    -v /path/to/local/filedir:/var/www/jaf \
     jaf
 ```
 
