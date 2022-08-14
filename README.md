@@ -26,7 +26,7 @@ Refer to the `example.conf` file:
 Port:       4711
 # a comment
 LinkPrefix: https://jaf.example.com/
-FileDir:    /var/www/jaf.example.com/
+FileDir:    /var/www/jaf/
 LinkLength: 5
 ```
 
