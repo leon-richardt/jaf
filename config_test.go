@@ -24,6 +24,6 @@ func TestConfigFromFile(t *testing.T) {
 
 	assertEqualInt(config.Port, 4711, t)
 	assertEqualString(config.LinkPrefix, "https://jaf.example.com/", t)
-	assertEqualString(config.FileDir, "/var/www/jaf.example.com/", t)
+	assertEqualString(config.FileDir, "/var/www/jaf/", t)
 	assertEqualInt(config.LinkLength, 5, t)
 }
