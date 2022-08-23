@@ -8,6 +8,9 @@ import (
 	exif "github.com/dsoprea/go-exif/v3"
 	exifcommon "github.com/dsoprea/go-exif/v3/common"
 	jis "github.com/dsoprea/go-jpeg-image-structure/v2"
+	// This is only needed for the log.Is() function to test error types. I would normally just
+	// reimplement this function privately but it is pulled in as an indirect dependency anyway.
+	exiflog "github.com/dsoprea/go-logging"
 	pis "github.com/dsoprea/go-png-image-structure/v2"
 )
 
@@ -37,7 +40,7 @@ func (scrubber *ExifScrubber) ScrubExif(fileData []byte) ([]byte, error) {
 		segmentList := intfc.(*jis.SegmentList)
 		rootIfd, _, err := segmentList.Exif()
 		if err != nil {
-			if err == exif.ErrNoExif {
+			if exiflog.Is(err, exif.ErrNoExif) {
 				// Incoming data contained no EXIF in the first place so we can return the original
 				return fileData, nil
 			}
@@ -71,7 +74,7 @@ func (scrubber *ExifScrubber) ScrubExif(fileData []byte) ([]byte, error) {
 		chunks := intfc.(*pis.ChunkSlice)
 		rootIfd, _, err := chunks.Exif()
 		if err != nil {
-			if err == exif.ErrNoExif {
+			if exiflog.Is(err, exif.ErrNoExif) {
 				// Incoming data contained no EXIF in the first place so we can return the original
 				return fileData, nil
 			}
