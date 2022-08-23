@@ -7,13 +7,13 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/leon-richardt/jaf/exifscrubber"
 )
 
 const allowedChars = "0123456789ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz"
 
-var (
-	config Config
-)
+var config Config
 
 type parameters struct {
 	configFile string
@@ -40,6 +40,15 @@ func main() {
 		log.Fatalf("could not read config file: %s\n", err.Error())
 	}
 
+	handler := uploadHandler{
+		config: config,
+	}
+
+	if config.ScrubExif {
+		scrubber := exifscrubber.NewExifScrubber(config.ExifAllowedIds, config.ExifAllowedPaths)
+		handler.exifScrubber = &scrubber
+	}
+
 	// Start server
 	uploadServer := &http.Server{
 		ReadTimeout:  30 * time.Second,
@@ -48,6 +57,6 @@ func main() {
 	}
 
 	log.Printf("starting jaf on port %d\n", config.Port)
-	http.Handle("/upload", &uploadHandler{config: config})
+	http.Handle("/upload", &handler)
 	uploadServer.ListenAndServe()
 }
