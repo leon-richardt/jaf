@@ -31,7 +31,12 @@ func ConfigFromFile(filePath string) (*Config, error) {
 
 	log.SetPrefix("config.FromFile > ")
 
-	retval := &Config{}
+	retval := &Config{
+		Port:       4711,
+		LinkPrefix: "https://jaf.example.com/",
+		FileDir:    "/var/www/jaf/",
+		LinkLength: 5,
+	}
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
