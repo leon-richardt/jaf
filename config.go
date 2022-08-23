@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/go-errors/errors"
 )
 
 const (
@@ -142,7 +144,7 @@ func ConfigFromFile(filePath string) (*Config, error) {
 
 			retval.ExifAbortOnError = parsed
 		default:
-			log.Printf("unexpected key: \"%s\", ignoring\n", key)
+			return nil, errors.Errorf("unexpected config key: \"%s\"", key)
 		}
 	}
 

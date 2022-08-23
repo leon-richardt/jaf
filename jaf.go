@@ -37,7 +37,7 @@ func main() {
 	// Read config
 	config, err := ConfigFromFile(params.configFile)
 	if err != nil {
-		log.Fatalf("could not read config file: %s\n", err.Error())
+		log.Fatalf("could not parse config file: %s\n", err.Error())
 	}
 
 	handler := uploadHandler{
