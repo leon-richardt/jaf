@@ -7,9 +7,9 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/leon-richardt/jaf/exifscrubber"
+	"github.com/leon-richardt/jaf/extdetect"
 )
 
 type uploadHandler struct {
@@ -65,8 +65,7 @@ func (handler *uploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 
-	_, fileExtension := splitFileName(header.Filename)
-	link, err := generateLink(handler, fileData[:], fileExtension)
+	link, err := generateLink(handler, fileData[:], header.Filename)
 	if err != nil {
 		http.Error(w, "could not save file: "+err.Error(), http.StatusInternalServerError)
 		log.Println("    could not save file: " + err.Error())
@@ -80,13 +79,15 @@ func (handler *uploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 // Generates a valid link to uploadFile with the specified file extension.
 // Returns the link or an error in case of failure.
 // Does not close the passed file pointer.
-func generateLink(handler *uploadHandler, fileData []byte, fileExtension string) (string, error) {
+func generateLink(handler *uploadHandler, fileData []byte, fileName string) (string, error) {
+	ext := extdetect.BuildFileExtension(fileData, fileName)
+
 	// Find an unused file name
 	var fullFileName string
 	var savePath string
 	for {
 		fileStem := createRandomFileName(handler.config.LinkLength)
-		fullFileName = fileStem + fileExtension
+		fullFileName = fileStem + ext
 		savePath = handler.config.FileDir + fullFileName
 
 		if !fileExists(savePath) {
@@ -124,15 +125,4 @@ func createRandomFileName(length int) string {
 	}
 
 	return string(chars)
-}
-
-func splitFileName(name string) (string, string) {
-	extIndex := strings.LastIndex(name, ".")
-
-	if extIndex == -1 {
-		// No dot at all
-		return name, ""
-	}
-
-	return name[:extIndex], name[extIndex:]
 }
