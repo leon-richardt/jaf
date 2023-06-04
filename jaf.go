@@ -11,7 +11,7 @@ import (
 	"github.com/leon-richardt/jaf/exifscrubber"
 )
 
-const allowedChars = "0123456789ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz"
+const allowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 var config Config
 
